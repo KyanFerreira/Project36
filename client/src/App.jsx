@@ -60,8 +60,14 @@ function App() {
   useEffect(()=> {
     const fetchFavorites = async()=> {
       console.log('We are inside fetch favorites');
-      const response = await fetch(`/api/users/${auth.id}/favorites`);
+      const response = await fetch(`/api/users/${auth.id}/favorites`, {
+        headers: {
+          authorization: window.localStorage.getItem('token')
+        }
+      });
       const json = await response.json();
+      console.log(json);
+      console.log(response);
       if(response.ok){
         setFavorites(json);
       }
@@ -99,7 +105,8 @@ function App() {
       method: 'POST',
       body: JSON.stringify({ product_id }),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        authorization: window.localStorage.getItem('token')
       }
     });
 
@@ -115,13 +122,16 @@ function App() {
   const removeFavorite = async(id)=> {
     const response = await fetch(`/api/users/${auth.id}/favorites/${id}`, {
       method: 'DELETE',
+      headers: {
+        authorization: window.localStorage.getItem('token')
+      }
     });
-
+   //const json = await response.json();
     if(response.ok){
       setFavorites(favorites.filter(favorite => favorite.id !== id));
     }
     else {
-      console.log(json);
+      console.log(response);
     }
   }
 

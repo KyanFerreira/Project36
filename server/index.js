@@ -23,7 +23,7 @@ app.use('/assets', express.static(path.join(__dirname, '../client/dist/assets'))
 const isLoggedIn = async(req, res, next)=> {
   try {
     console.log('Inside is LoggedIn');
-    console.log(req.headers);
+    console.log(req.headers.authorization);
     req.user = await findUserByToken(req.headers.authorization);
     next();
   }
@@ -88,14 +88,14 @@ app.get('/api/users/:id/favorites', isLoggedIn, async(req, res, next)=> {
   }
 });
 
-app.delete('/api/users/:userId/userSkills/:id', isLoggedIn, async(req, res, next)=> {
+app.delete('/api/users/:userId/favorites/:id', isLoggedIn, async(req, res, next)=> {
   try {
     if(req.params.userId !== req.user.id){
       const error = Error('not authorized');
       error.status = 401;
       throw error;
     }
-    await deleteUserSkill({ user_id: req.params.userId, id: req.params.id });
+    await deleteFavorites({ user_id: req.params.userId, id: req.params.id });
     res.sendStatus(204);
   }
   catch(ex){
